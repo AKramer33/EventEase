@@ -1,0 +1,28 @@
+﻿@page "/event/{eventName}"
+
+@code {
+    [Parameter] public string eventName { get; set; } = string.Empty;
+
+    private EventModel? eventDetails;
+
+    private List<EventModel> allEvents = new()
+    {
+        new EventModel { Name = "Tech Conference 2025", Date = new DateTime(2025, 3, 15), Location = "New York, NY" },
+        new EventModel { Name = "Blazor Workshop", Date = new DateTime(2025, 4, 10), Location = "San Francisco, CA" },
+        new EventModel { Name = "AI & ML Summit", Date = new DateTime(2025, 6, 5), Location = "Chicago, IL" }
+    };
+
+    protected override void OnInitialized()
+    {
+        eventDetails = allEvents.FirstOrDefault(e => e.Name == eventName);
+    }
+}
+
+@if (eventDetails != null)
+{
+    <EventCard Name="@eventDetails.Name" Date="@eventDetails.Date" Location="@eventDetails.Location" />
+}
+else
+{
+    <p>Event not found.</p>
+}

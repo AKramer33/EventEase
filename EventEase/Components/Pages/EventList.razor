@@ -1,0 +1,6 @@
+﻿@foreach (var ev in events)
+{
+    <a href="/event/@ev.Name">
+        <EventCard Name="@ev.Name" Date="@ev.Date" Location="@ev.Location" />
+    </a>
+}

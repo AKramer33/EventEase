@@ -1,0 +1,40 @@
+﻿@page "/register"
+
+<h2>Register for an Event</h2>
+
+<EditForm Model="@registration" OnValidSubmit="SubmitForm">
+    <DataAnnotationsValidator />
+
+    <div>
+        <label>Name:</label>
+        <InputText @bind-Value="registration.Name" />
+    </div>
+
+    <div>
+        <label>Email:</label>
+        <InputText @bind-Value="registration.Email" />
+    </div>
+
+    <button type="submit">Register</button>
+</EditForm>
+
+@if (successMessage != null)
+{
+    <p style="color: green">@successMessage</p>
+}
+
+@code {
+    private RegistrationModel registration = new();
+    private string? successMessage;
+
+    private void SubmitForm()
+    {
+        successMessage = "Registration successful!";
+    }
+
+    public class RegistrationModel
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+    }
+}
