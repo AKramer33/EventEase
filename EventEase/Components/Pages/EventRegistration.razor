@@ -1,18 +1,25 @@
 ﻿@page "/register"
 
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
+@using EventEase.Services  @* Where SessionStateService & AttendanceTrackerService live *@
+
 <h2>Register for an Event</h2>
 
 <EditForm Model="@registration" OnValidSubmit="SubmitForm">
     <DataAnnotationsValidator />
+    <ValidationSummary />
 
     <div>
-        <label>Name:</label>
-        <InputText @bind-Value="registration.Name" />
+        <label for="userName">Name:</label>
+        <InputText id="userName" @bind-Value="registration.Name" />
+        <ValidationMessage For="@(() => registration.Name)" />
     </div>
 
     <div>
-        <label>Email:</label>
-        <InputText @bind-Value="registration.Email" />
+        <label for="userEmail">Email:</label>
+        <InputText id="userEmail" @bind-Value="registration.Email" />
+        <ValidationMessage For="@(() => registration.Email)" />
     </div>
 
     <button type="submit">Register</button>
@@ -27,14 +34,28 @@
     private RegistrationModel registration = new();
     private string? successMessage;
 
+    [Inject] private SessionStateService SessionState { get; set; } = default!;
+    [Inject] private AttendanceTrackerService AttendanceTracker { get; set; } = default!;
+
     private void SubmitForm()
     {
-        successMessage = "Registration successful!";
+        // Update the user's session data
+        SessionState.UserName = registration.Name;
+        SessionState.UserEmail = registration.Email;
+
+        // Track attendance or user registration
+        AttendanceTracker.RegisterUser(SessionState.UserName, SessionState.UserEmail);
+
+        successMessage = "Registration successful! You are now logged in.";
     }
 
     public class RegistrationModel
     {
+        [Required(ErrorMessage = "Name is required.")]
         public string Name { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Email is required.")]
+        [EmailAddress(ErrorMessage = "Invalid email address.")]
         public string Email { get; set; } = string.Empty;
     }
 }
